@@ -1,28 +1,31 @@
-radio.onReceivedNumber(function (receivedNumber) {
-    if (receivedNumber == 1) {
-        pins.digitalWritePin(DigitalPin.P1, 1)
-        music.play(muzika, music.PlaybackMode.LoopingInBackground)
-    } else if (receivedNumber == 0) {
-        pins.digitalWritePin(DigitalPin.P1, 0)
-        music.stopAllSounds()
+input.onButtonPressed(Button.A, function () {
+    if (sprite.isTouching(lik_2)) {
+        game.addScore(1)
+        lik_2.delete()
     }
 })
-let muzika = 0
-muzika = music.stringPlayable("D B G F C5 D F D ", 300)
-radio.setGroup(10)
-music.setVolume(255)
+input.onButtonPressed(Button.B, function () {
+    basic.showString("" + (game.score()))
+})
+let lik_2: game.LedSprite = null
+let sprite: game.LedSprite = null
+sprite = game.createSprite(2, 2)
+pins.setPull(DigitalPin.P1, PinPullMode.PullUp)
 basic.forever(function () {
     if (pins.analogReadPin(AnalogReadWritePin.P2) < 10) {
-        pins.digitalWritePin(DigitalPin.P1, 1)
-        music.play(muzika, music.PlaybackMode.LoopingInBackground)
+        sprite.change(LedSpriteProperty.Y, -1)
+        basic.pause(500)
     } else if (pins.analogReadPin(AnalogReadWritePin.P2) < 80) {
-        pins.digitalWritePin(DigitalPin.P1, 0)
-        music.stopAllSounds()
+        lik_2 = game.createSprite(randint(0, 4), randint(0, 4))
+        basic.pause(500)
     } else if (pins.analogReadPin(AnalogReadWritePin.P2) < 130) {
-        muzika = 0
+        sprite.change(LedSpriteProperty.Y, 1)
+        basic.pause(500)
     } else if (pins.analogReadPin(AnalogReadWritePin.P2) < 160) {
-        muzika = music.stringPlayable("C D E F F E D C ", 400)
+        sprite.change(LedSpriteProperty.X, -1)
+        basic.pause(500)
     } else if (pins.analogReadPin(AnalogReadWritePin.P2) < 600) {
-        muzika = music.stringPlayable("D B G F C5 D F D ", 400)
+        sprite.change(LedSpriteProperty.X, 1)
+        basic.pause(500)
     }
 })
